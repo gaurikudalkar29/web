@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Tic Tac Toe</title>
+    <style>
+      @import url("https://fonts.googleapis.com/css2?family=Source+Code+Pro:wght@600&display=swap");
+
+      * {
+        padding: 0;
+        margin: 0;
+        box-sizing: border-box;
+      }
+
+      :root {
+        --purple: #671364;
+        --winning-blocks: #cc48b2;
+      }
+
+      body {
+        color: var(--purple);
+        font-family: "Source Code Pro", monospace;
+      }
+
+      h1 {
+        font-size: 56px;
+        text-transform: uppercase;
+      }
+
+      .container {
+        padding: 35px;
+        height: 100vh;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        flex-direction: column;
+        background-color: #dcaddb;
+      }
+
+      #gameboard {
+        width: 300px;
+        display: flex;
+        margin-top: 100px;
+        flex-wrap: wrap;
+      }
+
+      .box {
+        height: 100px;
+        width: 100px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: var(--purple);
+        font-size: 120px;
+        border-right: 2px solid;
+        border-bottom: 2px solid;
+      }
+
+      .box:nth-child(3n) {
+        border-right: none;
+      }
+
+      .box:nth-child(6) ~ .box {
+        border-bottom: none;
+      }
+
+      button {
+        padding: 10px 20px;
+        background-color: var(--purple);
+        color: #dcaddb;
+        border-color: var(--purple);
+        font-size: 18px;
+        margin-top: 30px;
+        font-weight: 600;
+      }
+
+      button:hover {
+        cursor: pointer;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <h1 id="heading">Lets Play...</h1>
+      <h1 id="heading">TIC TAC TOE</h1>
+      <button id="restart">Play Again</button>
+
+      <div id="gameboard">
+        <div class="box" id="0"></div>
+        <div class="box" id="1"></div>
+        <div class="box" id="2"></div>
+        <div class="box" id="3"></div>
+        <div class="box" id="4"></div>
+        <div class="box" id="5"></div>
+        <div class="box" id="6"></div>
+        <div class="box" id="7"></div>
+        <div class="box" id="8"></div>
+      </div>
+    </div>
+
+    <script>
+      let heading = document.getElementById("heading");
+      let restart = document.getElementById("restart");
+      let boxes = Array.from(document.getElementsByClassName("box"));
+      let winnerIndicator = getComputedStyle(document.body).getPropertyValue(
+        "--winning-blocks"
+      );
+      const oTxt = "O";
+      const xTxt = "X";
+      let currentPlayer = xTxt;
+      let spaces = Array(9).fill(null);
+
+      const start = () => {
+        boxes.forEach((box) => box.addEventListener("click", boxClicked));
+      };
+
+      function boxClicked(e) {
+        const id = e.target.id;
+        if (!spaces[id]) {
+          spaces[id] = currentPlayer;
+          e.target.innerText = currentPlayer;
+          if (playerHasWon() !== false) {
+            heading.innerHTML = `${currentPlayer} has won!`;
+            let winning_blocks = playerHasWon();
+            winning_blocks.map(
+              (box) => (boxes[box].style.backgroundColor = winnerIndicator)
+            );
+            return;
+          }
+          currentPlayer = currentPlayer == xTxt ? oTxt : xTxt;
+        }
+      }
+
+      const winningCombos = [
+        [0, 1, 2],
+        [3, 4, 5],
+        [6, 7, 8],
+        [0, 3, 6],
+        [1, 4, 7],
+        [2, 5, 8],
+        [0, 4, 8],
+        [2, 4, 6],
+      ];
+
+      function playerHasWon() {
+        for (const condition of winningCombos) {
+          let [a, b, c] = condition;
+          if (spaces[a] && spaces[a] == spaces[b] && spaces[a] == spaces[c]) {
+            return [a, b, c];
+          }
+        }
+        return false;
+      }
+
+      restart.addEventListener("click", restartGame);
+
+      function restartGame() {
+        spaces.fill(null);
+        boxes.forEach((box) => {
+          box.innerText = "";
+          box.style.backgroundColor = "";
+        });
+        heading.innerHTML = "Tic Tac Toe";
+        currentPlayer = xTxt;
+      }
+
+      start();
+    </script>
+  </body>
+</html>
